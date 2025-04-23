@@ -33,7 +33,7 @@ def generate_medical_response(query):
 
 @app.route('/')
 def home():
-    return render_template('index.html')  # 👈 Fixed this line
+    return render_template('index.html')  
 
 @app.route('/get_diagnosis', methods=['POST'])
 def get_diagnosis():
