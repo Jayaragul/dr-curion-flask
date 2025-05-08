@@ -8,10 +8,15 @@ app = Flask(__name__)
 API_KEY = "AIzaSyBc_RdmRi9ESMDmo5LQjuWjnA4x2WM0zF8"
 genai.configure(api_key=API_KEY)
 
-# Load Model
-model = genai.GenerativeModel("gemini-1.5-pro-latest")
+# Primary and fallback models
+primary_model_name = "gemini-2.0-pro-exp-02-05"
+fallback_model_name = "gemini-1.5-pro-latest"
 
-# Function to generate medical response from the AI model
+# Load models
+primary_model = genai.GenerativeModel(primary_model_name)
+fallback_model = genai.GenerativeModel(fallback_model_name)
+
+# Function to generate medical response
 def generate_medical_response(query):
     if not query.strip():
         return "Error: Please enter symptoms."
@@ -21,14 +26,25 @@ def generate_medical_response(query):
     As an experienced doctor, provide a concise response with:
     - Likely diagnosis
     - Possible causes
-    - Specific medications (prescription in Indian brand)
-    - Key medical advice (1-2 lines)
+    - Specific medications (eg suggest prescription in Indian brand)
+    - Key medical advice (1-3 lines)
     Format the response clearly.
     """
+
+    # Try primary model
     try:
-        response = model.generate_content(prompt)
-        return response.text.strip() if response and hasattr(response, "text") else "Error: No valid response."
-    except:
+        response = primary_model.generate_content(prompt)
+        return response.text.strip() if response and hasattr(response, "text") else "Error: No valid response from flash model."
+    except Exception as e:
+        print("Primary model failed:", str(e))
+    
+    # Try fallback model
+    try:
+        response = fallback_model.generate_content(prompt)
+        fallback_msg = "\n\n⚠️ *Note: Fallback model used due to an error with the main model.*"
+        return (response.text.strip() + fallback_msg) if response and hasattr(response, "text") else "Error: Fallback model also failed."
+    except Exception as e:
+        print("Fallback model failed:", str(e))
         return "Error: AI model encountered an issue."
 
 @app.route('/')
@@ -44,6 +60,5 @@ def get_diagnosis():
 
 # Run the Flask app
 import os
-
 port = int(os.environ.get("PORT", 5000))
 app.run(host="0.0.0.0", port=port)
