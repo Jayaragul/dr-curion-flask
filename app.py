@@ -5,12 +5,12 @@ from flask import Flask, request, jsonify, render_template
 app = Flask(__name__)
 
 # Gemini AI API Key
-API_KEY = "AIzaSyBc_RdmRi9ESMDmo5LQjuWjnA4x2WM0zF8"
+API_KEY = "AIzaSyBFAOKW-cul_3zlz17AZAiJZ6kMqu_bC1k"
 genai.configure(api_key=API_KEY)
 
 # Primary and fallback models
-primary_model_name = "gemini-2.0-pro-exp-02-05"
-fallback_model_name = "gemini-1.5-pro-latest"
+primary_model_name ="gemini-1.5-flash-latest"
+fallback_model_name = "gemini-1.5-flash-001-tuning"
 
 # Load models
 primary_model = genai.GenerativeModel(primary_model_name)
