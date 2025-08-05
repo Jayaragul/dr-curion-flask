@@ -5,7 +5,7 @@ from flask import Flask, request, jsonify, render_template
 app = Flask(__name__)
 
 # Gemini AI API Key
-API_KEY = "AIzaSyBFAOKW-cul_3zlz17AZAiJZ6kMqu_bC1k"
+API_KEY = "AIzaSyBFAOKW-cul_3zlz17AZAiJZ"
 genai.configure(api_key=API_KEY)
 
 # Primary and fallback models
